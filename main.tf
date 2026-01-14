@@ -165,6 +165,56 @@ resource "azurerm_linux_web_app" "app" {
   }
 }
 
+# ──────────────────────────────────────────────────────────────────────────────
+# Build React + Deploy using null_resource
+# ──────────────────────────────────────────────────────────────────────────────
+resource "null_resource" "build_and_deploy_react" {
+  triggers = {
+    # Re-run build/deploy when React source files change
+    react_source_hash = sha256(join("", [for f in fileset(var.react_source_path, "**/*") : filesha256("${var.react_source_path}/${f}")]))
+  }
+
+  provisioner "local-exec" {
+    # Build the React app locally
+    command = <<EOT
+      cd ${var.react_source_path}
+      npm ci
+      npm run build
+    EOT
+  }
+
+  provisioner "local-exec" {
+    # Zip the build folder
+    command = <<EOT
+      cd ${var.react_source_path}
+      if [ -f build.zip ]; then rm build.zip; fi
+      zip -r build.zip build
+    EOT
+  }
+
+  provisioner "local-exec" {
+    # Deploy to Azure App Service using Azure CLI
+    command = <<EOT
+      az webapp deploy \
+        --resource-group ${azurerm_resource_group.rg.name} \
+        --name ${azurerm_linux_web_app.app.name} \
+        --src-path ${var.react_source_path}/build.zip \
+        --type zip \
+        --clean true
+    EOT
+  }
+
+  depends_on = [
+    azurerm_linux_web_app.app
+  ]
+
+  # Optional: Clean up local zip after deployment
+  provisioner "local-exec" {
+    when    = destroy
+    command = "rm -f ${var.react_source_path}/build.zip"
+  }
+}
+
 # Assign Managed Identity to Cosmos DB Role
 resource "azurerm_role_assignment" "mi_cosmos" {
   scope                = azurerm_cosmosdb_account.cosmos.id
