@@ -1,0 +1,100 @@
+# azure-pipelines.yml
+trigger:
+  - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  terraformWorkingDir: '$(System.DefaultWorkingDirectory)'
+  reactAppDir: '$(System.DefaultWorkingDirectory)/react-employee'
+  appServiceName: 'employee-app'                    # your App Service name
+  resourceGroupName: 'employee-app-rg'
+  azureSubscription: 'Azure-Connection'             # Your service connection name
+
+stages:
+  - stage: Build
+    displayName: 'Build React Application'
+    jobs:
+      - job: BuildReact
+        steps:
+          - task: NodeTool@0
+            inputs:
+              versionSpec: '20.x'
+            displayName: 'Install Node.js 20.x'
+
+          - script: |
+              cd $(reactAppDir)
+              npm ci
+              npm run build
+            displayName: 'Install dependencies & build React app'
+
+          - task: PublishBuildArtifacts@1
+            inputs:
+              pathToPublish: '$(reactAppDir)/build'
+              artifactName: 'react-build'
+              publishLocation: 'Container'
+            displayName: 'Publish React build artifact'
+
+  - stage: Infrastructure
+    displayName: 'Deploy Infrastructure (Terraform)'
+    dependsOn: Build
+    jobs:
+      - job: TerraformDeploy
+        steps:
+          - task: TerraformInstaller@0
+            inputs:
+              terraformVersion: '1.9.7'   # or latest stable
+            displayName: 'Install Terraform'
+
+          - task: TerraformTaskV4@4
+            inputs:
+              provider: 'azurerm'
+              command: 'init'
+              workingDirectory: $(terraformWorkingDir)
+              backendServiceArm: $(azureSubscription)
+              backendAzureRmResourceGroupName: 'tfstate-rg'
+              backendAzureRmStorageAccountName: 'tfstatestorageacct'
+              backendAzureRmContainerName: 'tfstate'
+              backendAzureRmKey: 'employee-app.tfstate'
+            displayName: 'Terraform Init'
+
+          - task: TerraformTaskV4@4
+            inputs:
+              provider: 'azurerm'
+              command: 'plan'
+              workingDirectory: $(terraformWorkingDir)
+              environmentServiceNameAzureRM: $(azureSubscription)
+            displayName: 'Terraform Plan'
+
+          - task: TerraformTaskV4@4
+            inputs:
+              provider: 'azurerm'
+              command: 'apply'
+              workingDirectory: $(terraformWorkingDir)
+              environmentServiceNameAzureRM: $(azureSubscription)
+              commandOptions: '-auto-approve'
+            displayName: 'Terraform Apply'
+
+  - stage: DeployApp
+    displayName: 'Deploy React App to Azure App Service'
+    dependsOn: Infrastructure
+    jobs:
+      - deployment: DeployReact
+        displayName: 'Deploy React to App Service'
+        environment: 'production'
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - download: current
+                  artifact: react-build
+
+                - task: AzureWebApp@1
+                  inputs:
+                    azureSubscription: $(azureSubscription)
+                    appName: $(appServiceName)
+                    package: '$(Pipeline.Workspace)/react-build'
+                    deploymentMethod: 'zipDeploy'
+                    appOffline: true
+                  displayName: 'Deploy React build to App Service'
