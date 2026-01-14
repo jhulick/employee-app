@@ -11,4 +11,4 @@
 
 This uses private endpoint for Cosmos, Managed Identity for auth, and a simple VNet setup. For production, add WAF, monitoring, and scale. Let me know if you need the React/Node code or refinements!
 
-[Employees App](employees.png)
+![Employees App](./employees.png)
