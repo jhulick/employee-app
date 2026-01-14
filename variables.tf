@@ -1,39 +1,47 @@
 variable "resource_group_name" {
-  type    = string
-  default = "employee-app-rg"
+  type        = string
+  description = "The resource group for the app."
+  default     = "employee-app-rg"
 }
 
 variable "location" {
-  type    = string
-  default = "eastus"
+  type        = string
+  description = "The location of the app deployment."
+  default     = "eastus"
 }
 
 variable "cosmos_db_account_name" {
-  type    = string
-  default = "employee-cosmosdb"
+  type        = string
+  description = "The cosmos db account name."
+  default     = "employee-cosmosdb"
 }
 
 variable "app_service_plan_name" {
-  type    = string
-  default = "employee-app-plan"
+  type        = string
+  description = "The app service plan name."
+  default     = "employee-app-plan"
 }
 
 variable "app_service_name" {
-  type    = string
-  default = "employee-app-service"
+  type        = string
+  description = "The app service name."
+  default     = "employee-app-service"
 }
 
 variable "vnet_name" {
-  type    = string
-  default = "employee-vnet"
+  type        = string
+  description = "The app virtual network name."
+  default     = "employee-vnet"
 }
 
 variable "subnet_name" {
-  type    = string
-  default = "employee-subnet"
+  type        = string
+  description = "The app subnet name."
+  default     = "employee-subnet"
 }
 
 variable "private_endpoint_subnet_name" {
-  type    = string
-  default = "private-endpoint-subnet"
+  type        = string
+  description = "The private endpoint name."
+  default     = "private-endpoint-subnet"
 }

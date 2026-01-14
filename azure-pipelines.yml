@@ -29,12 +29,50 @@ stages:
               npm run build
             displayName: 'Install dependencies & build React app'
 
+          - task: ArchiveFiles@2
+            inputs:
+              rootFolderOrFile: '$(reactWorkingDirectory)/build'
+              includeRootFolder: false
+              archiveType: 'zip'
+              archiveFile: '$(Build.ArtifactStagingDirectory)/react-app.zip'
+            displayName: 'Archive React build'
+
+          - task: PublishBuildArtifacts@1
+            inputs:
+              pathToPublish: '$(Build.ArtifactStagingDirectory)/react-app.zip'
+              artifactName: 'react-app'
+            displayName: 'Publish React artifact'
+
           - task: PublishBuildArtifacts@1
             inputs:
               pathToPublish: '$(reactAppDir)/build'
               artifactName: 'react-build'
               publishLocation: 'Container'
             displayName: 'Publish React build artifact'
+
+  - stage: SecurityScan
+    jobs:
+      - job: SecurityScans
+        displayName: 'Security & Compliance Scanning'
+        steps:
+        # 1. Trivy - Container & Filesystem + Terraform scanning
+        - script: |
+            # Install latest Trivy
+            curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v0.58.2
+
+            # Scan Terraform code (critical step)
+            trivy config $(terraformWorkingDirectory) \
+              --severity HIGH,CRITICAL \
+              --exit-code 1 \
+              --format table \
+              --no-progress
+
+            # Optional: also scan the built React app (for npm dependencies)
+            trivy fs $(reactWorkingDirectory) \
+              --severity HIGH,CRITICAL \
+              --exit-code 0 \   # Don't fail build on warnings
+              --format table
+          displayName: 'Run Trivy security scan (Terraform + React)'
 
   - stage: Infrastructure
     displayName: 'Deploy Infrastructure (Terraform)'
@@ -87,14 +125,18 @@ stages:
           runOnce:
             deploy:
               steps:
-                - download: current
-                  artifact: react-build
+                - task: DownloadPipelineArtifact@2
+                  inputs:
+                    artifactName: 'react-app'
+                    path: $(Pipeline.Workspace)/react-app
+                  displayName: 'Download React build artifact'
 
                 - task: AzureWebApp@1
                   inputs:
                     azureSubscription: $(azureSubscription)
+                    appType: 'webAppLinux'
                     appName: $(appServiceName)
-                    package: '$(Pipeline.Workspace)/react-build'
+                    package: '$(Pipeline.Workspace)/react-app/react-app.zip'
                     deploymentMethod: 'zipDeploy'
                     appOffline: true
                   displayName: 'Deploy React build to App Service'
