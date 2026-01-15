@@ -1,13 +1,13 @@
 # Outputs
 output "app_service_url" {
-  value = azurerm_linux_web_app.app.default_hostname
+  value = module.app_service.default_host_name
 }
 
 output "cosmos_endpoint" {
-  value = azurerm_cosmosdb_account.cosmos.endpoint
+  value = module.cosmos_db.endpoint
 }
 
 output "cosmos_key" {
-  value     = azurerm_cosmosdb_account.cosmos.primary_key
+  value     = module.cosmos_db.primary_key
   sensitive = true
 }

@@ -24,7 +24,6 @@ resource "azurerm_cosmosdb_account" "cosmos" {
     location          = var.location
     failover_priority = 0
   }
-  enable_multiple_write_locations = false
   public_network_access_enabled   = false # For private endpoint
 }
 
