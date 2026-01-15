@@ -18,3 +18,12 @@ variable "subnet_id" {
   description = "The subnet id to deploy to."
 }
 
+variable "vnet_id" {
+  type        = string
+  description = "The vnet id to deploy to."
+}
+
+variable "principal_id" {
+  type        = string
+  description = "The principal id."
+}

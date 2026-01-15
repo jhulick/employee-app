@@ -44,6 +44,7 @@ module "cosmos_db" {
   location            = var.location
   vnet_id             = module.vnet.vnet_id
   subnet_id           = module.vnet.private_endpoint_subnet_id
+  principal_id        = module.app_service.principal_id
 }
 
 module "app_service" {

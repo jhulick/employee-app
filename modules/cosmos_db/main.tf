@@ -1,3 +1,16 @@
+terraform {
+  required_providers {
+    azapi = {
+      source  = "azure/azapi"
+      version = "~> 1.15"
+    }
+  }
+}
+
+provider "azapi" {
+  subscription_id = "a732c989-d99b-42c2-9f7c-393ef01a05f2"
+}
+
 resource "azurerm_cosmosdb_account" "cosmos" {
   name                = var.cosmos_db_account_name
   location            = var.location
