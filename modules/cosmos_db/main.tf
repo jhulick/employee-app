@@ -108,7 +108,7 @@ resource "azapi_resource_action" "seed_employees" {
   ]
 
   body = jsonencode({
-    for emp in jsondecode(file("${path.module}/modules/cosmos_db/employees.json")) : emp.id => {
+    for emp in jsondecode(file("${path.module}/employees.json")) : emp.id => {
       id         = tostring(emp.id)
       image      = emp.image
       name       = emp.name
