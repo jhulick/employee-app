@@ -7,7 +7,7 @@ variable "resource_group_name" {
 variable "location" {
   type        = string
   description = "The location of the app deployment."
-  default     = "eastus"
+  default     = "westus2"
 }
 
 variable "cosmos_db_account_name" {
