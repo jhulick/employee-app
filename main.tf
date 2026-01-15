@@ -24,37 +24,37 @@ provider "azapi" {
 
 # Resource Group
 module "resource_group" {
-  source   = "./modules/resource_group"
-  name     = var.resource_group_name
-  location = var.location
+  source              = "./modules/resource_group"
+  resource_group_name = var.resource_group_name
+  location            = var.location
 }
 
 module "vnet" {
   source              = "./modules/vnet"
-  name                = var.vnet_name
+  vnet_name           = var.vnet_name
   resource_group_name = module.resource_group.name
   location            = var.location
   address_space       = ["10.0.0.0/16"]
 }
 
 module "cosmos_db" {
-  source              = "./modules/cosmos_db"
-  account_name        = var.cosmos_db_account_name
-  resource_group_name = module.resource_group.name
-  location            = var.location
-  vnet_id             = module.vnet.vnet_id
-  subnet_id           = module.vnet.private_endpoint_subnet_id
-  principal_id        = module.app_service.principal_id
+  source                 = "./modules/cosmos_db"
+  cosmos_db_account_name = var.cosmos_db_account_name
+  resource_group_name    = module.resource_group.name
+  location               = var.location
+  vnet_id                = module.vnet.vnet_id
+  subnet_id              = module.vnet.private_endpoint_subnet_id
+  principal_id           = module.app_service.principal_id
 }
 
 module "app_service" {
-  source              = "./modules/app_service"
-  plan_name           = var.app_service_plan_name
-  app_name            = var.app_service_name
-  resource_group_name = module.resource_group.name
-  location            = var.location
-  cosmos_endpoint     = module.cosmos_db.endpoint
-  cosmos_key          = module.cosmos_db.primary_key # Use Managed Identity instead for prod
+  source                = "./modules/app_service"
+  app_service_plan_name = var.app_service_plan_name
+  app_service_name      = var.app_service_name
+  resource_group_name   = module.resource_group.name
+  location              = var.location
+  cosmos_endpoint       = module.cosmos_db.endpoint
+  cosmos_key            = module.cosmos_db.primary_key # Use Managed Identity instead for prod
 }
 
 # ──────────────────────────────────────────────────────────────────────────────
