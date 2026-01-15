@@ -45,3 +45,9 @@ variable "private_endpoint_subnet_name" {
   description = "The private endpoint name."
   default     = "private-endpoint-subnet"
 }
+
+variable "react_source_path" {
+  type        = string
+  description = "The path to the react app source."
+  default     = "./emp-app"
+}

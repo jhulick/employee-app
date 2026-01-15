@@ -13,6 +13,11 @@ terraform {
 
 provider "azurerm" {
   features {}
+  subscription_id = "a732c989-d99b-42c2-9f7c-393ef01a05f2"
+}
+
+provider "azapi" {
+  subscription_id = "a732c989-d99b-42c2-9f7c-393ef01a05f2"
 }
 
 # Resource Group
