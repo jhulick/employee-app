@@ -54,7 +54,6 @@ module "app_service" {
   resource_group_name   = module.resource_group.name
   location              = var.location
   cosmos_endpoint       = module.cosmos_db.endpoint
-  cosmos_key            = module.cosmos_db.primary_key # Use Managed Identity instead for prod
 }
 
 # ──────────────────────────────────────────────────────────────────────────────
