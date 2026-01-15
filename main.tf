@@ -207,12 +207,6 @@ resource "null_resource" "build_and_deploy_react" {
   depends_on = [
     azurerm_linux_web_app.app
   ]
-
-  # Optional: Clean up local zip after deployment
-  provisioner "local-exec" {
-    when    = destroy
-    command = "rm -f ${var.react_source_path}/build.zip"
-  }
 }
 
 # Assign Managed Identity to Cosmos DB Role
