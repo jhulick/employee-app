@@ -24,43 +24,21 @@ This uses private endpoint for Cosmos, Managed Identity for auth, and a simple V
 
 | Name | Version |
 |------|---------|
-| <a name="provider_azapi"></a> [azapi](#provider\_azapi) | ~> 1.15 |
-| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | ~> 3.116.0 |
 | <a name="provider_null"></a> [null](#provider\_null) | n/a |
 
 ## Modules
 
-No modules.
-
-## Security Controls (NIST 800-53 Rev 5)
-
-| NIST Control ID | Control Title | Implementation in Solution |
-|-----------------|---------------|----------------------------|
-| AC-4 | Information Flow Enforcement | Private Endpoint for Cosmos DB restricts traffic to VNet; App Service VNet integration ensures secure flow. |
-| AC-17 | Remote Access | Managed Identity eliminates credentials; no direct remote access to DB. |
-| SC-8 | Transmission Confidentiality and Integrity | HTTPS enforced in App Service; Cosmos DB private endpoint uses Azure backbone. |
-| SC-28 | Protection of Information at Rest | Cosmos DB encryption at rest (default); optional CMK integration. |
-| AU-12 | Audit Record Generation | Diagnostic settings log HTTP requests and metrics to Log Analytics. |
-| SI-4 | System Monitoring | App Service diagnostics and Cosmos DB metrics enable anomaly detection. |
+| Name | Source | Version |
+|------|--------|---------|
+| <a name="module_app_service"></a> [app\_service](#module\_app\_service) | ./modules/app_service | n/a |
+| <a name="module_cosmos_db"></a> [cosmos\_db](#module\_cosmos\_db) | ./modules/cosmos_db | n/a |
+| <a name="module_resource_group"></a> [resource\_group](#module\_resource\_group) | ./modules/resource_group | n/a |
+| <a name="module_vnet"></a> [vnet](#module\_vnet) | ./modules/vnet | n/a |
 
 ## Resources
 
 | Name | Type |
 |------|------|
-| [azapi_resource_action.seed_employees](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource_action) | resource |
-| [azurerm_cosmosdb_account.cosmos](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cosmosdb_account) | resource |
-| [azurerm_cosmosdb_sql_container.container](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cosmosdb_sql_container) | resource |
-| [azurerm_cosmosdb_sql_database.db](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cosmosdb_sql_database) | resource |
-| [azurerm_linux_web_app.app](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/linux_web_app) | resource |
-| [azurerm_private_dns_zone.cosmos_dns](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_dns_zone) | resource |
-| [azurerm_private_dns_zone_virtual_network_link.cosmos_link](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_dns_zone_virtual_network_link) | resource |
-| [azurerm_private_endpoint.cosmos_pe](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_endpoint) | resource |
-| [azurerm_resource_group.rg](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group) | resource |
-| [azurerm_role_assignment.mi_cosmos](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
-| [azurerm_service_plan.plan](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/service_plan) | resource |
-| [azurerm_subnet.app_subnet](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/subnet) | resource |
-| [azurerm_subnet.pe_subnet](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/subnet) | resource |
-| [azurerm_virtual_network.vnet](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network) | resource |
 | [null_resource.build_and_deploy_react](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
 
 ## Inputs
