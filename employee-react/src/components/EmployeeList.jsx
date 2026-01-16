@@ -8,7 +8,7 @@ const EmployeeList = () => {
     useEffect(() => {
         const fetchEmployees = async () => {
             try {
-                const response = await fetch('https://employee-cosmosdb.documents.azure.com:443/api/employees');
+                const response = await fetch('https://employee-react.azurewebsites.net/employees');
 
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);

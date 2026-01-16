@@ -7,7 +7,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 // Cosmos DB configuration (use environment variables in production)
-const cosmosEndpoint = process.env.COSMOS_ENDPOINT || 'https://your-cosmos-account.documents.azure.com:443/';
+const cosmosEndpoint = process.env.COSMOS_ENDPOINT || 'https://employee-cosmosdb.documents.azure.com:443/';
 const databaseId = 'employeesdb'; // Your database ID
 const containerId = 'employees'; // Your container ID
 
