@@ -51,7 +51,7 @@ module "cosmos_db" {
 module "function_app" {
   source = "./modules/function_app"
 
-  name                = var.function_app_name
+  function_app_name   = var.function_app_name
   resource_group_name = module.resource_group.name
   location            = var.location
 }
