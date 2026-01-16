@@ -47,6 +47,16 @@ module "cosmos_db" {
   principal_id           = module.app_service.principal_id
 }
 
+# Azure Function App (React front-end as static site)
+module "function_app" {
+  source = "./modules/function_app"
+
+  name                = var.function_app_name
+  resource_group_name = module.resource_group.name
+  location            = var.location
+  service_plan_sku    = "Y1"  # Consumption plan (serverless)
+}
+
 module "app_service" {
   source                = "./modules/app_service"
   app_service_plan_name = var.app_service_plan_name

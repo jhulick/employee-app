@@ -22,6 +22,12 @@ variable "app_service_plan_name" {
   default     = "employee-app-plan"
 }
 
+variable "function_app_name" {
+  type        = string
+  description = "The react function app name."
+  default     = "employee-react"
+}
+
 variable "app_service_name" {
   type        = string
   description = "The app service name."
