@@ -7,7 +7,7 @@ variable "resource_group_name" {
 variable "location" {
   type        = string
   description = "The location of the app deployment."
-  default     = "southindia"
+  default     = "westus2"
 }
 
 variable "cosmos_db_account_name" {
@@ -55,5 +55,11 @@ variable "private_endpoint_subnet_name" {
 variable "react_source_path" {
   type        = string
   description = "The path to the react app source."
-  default     = "./emp-app"
+  default     = "./employee-react"
+}
+
+variable "api_source_path" {
+  type        = string
+  description = "The path to the react app source."
+  default     = "./employee-api"
 }

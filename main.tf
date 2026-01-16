@@ -54,7 +54,6 @@ module "function_app" {
   name                = var.function_app_name
   resource_group_name = module.resource_group.name
   location            = var.location
-  service_plan_sku    = "Y1"  # Consumption plan (serverless)
 }
 
 module "app_service" {
@@ -100,6 +99,50 @@ resource "null_resource" "build_and_deploy_react" {
         --resource-group ${module.resource_group.name} \
         --name ${var.app_service_name} \
         --src-path ${var.react_source_path}/build.zip \
+        --type zip \
+        --clean true
+    EOT
+  }
+
+  depends_on = [
+    module.function_app
+  ]
+}
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Build API + Deploy using null_resource
+# ──────────────────────────────────────────────────────────────────────────────
+resource "null_resource" "build_and_deploy_api" {
+  triggers = {
+    # Re-run build/deploy when React source files change
+    api_source_hash = sha256(join("", [for f in fileset(var.api_source_path, "**/*") : filesha256("${var.api_source_path}/${f}")]))
+  }
+
+  provisioner "local-exec" {
+    # Build the React app locally
+    command = <<EOT
+      cd ${var.api_source_path}
+      npm ci
+      npm run build
+    EOT
+  }
+
+  provisioner "local-exec" {
+    # Zip the build folder
+    command = <<EOT
+      cd ${var.api_source_path}
+      if [ -f build.zip ]; then rm build.zip; fi
+      zip -r build.zip build
+    EOT
+  }
+
+  provisioner "local-exec" {
+    # Deploy to Azure App Service using Azure CLI
+    command = <<EOT
+      az webapp deploy \
+        --resource-group ${module.resource_group.name} \
+        --name ${var.app_service_name} \
+        --src-path ${var.api_source_path}/build.zip \
         --type zip \
         --clean true
     EOT
